@@ -1,69 +1,6 @@
-
-class Threading {
-  constructor(total) {
-    this.total = total;
-    this.pattern = Array(total).fill(0);
-    this.div = createBoxes(this.total, true);
-    this.div.className = 'row reverse';
-  }
-}
-
-class Treadling {
-  constructor(total) {
-    this.total = total;
-    this.pattern = Array(total).fill(0);
-    this.div = createBoxes(this.total, true);
-    this.div.className = 'row';
-  }
-}
-
-class Tieup {
-  constructor(total) {
-    this.total = total;
-    this.pattern = Array(total).fill(0);
-    this.div = createBoxes(this.total, true);
-    this.div.className = 'col reverse';
-  }
-}
-
-const createBoxes = (total, click)=> {
-  const parent = document.createElement("div");
-  for(let i=0; i<total; i++) {
-    const box = document.createElement("div");
-    box.classList.add('box');
-    if(click) {
-      box.addEventListener("click", function() {
-        const sectionId = this.parentElement.parentElement.id;
-        const dataList = dataByName[sectionId];
-        const nodes = Array.prototype.slice.call( this.parentElement.children );
-        const index = nodes.indexOf(this);
-        const parentIndex = this.parentElement.index;
-        let value = dataList[parentIndex].pattern[index];
-        value = value==0 ? 1:0;
-        dataList[parentIndex].pattern[index] = value;
-
-        if(value==1) {
-          this.classList.add('x');
-        } else {
-          this.classList.remove('x');
-        }
-        updateDrawdown();
-      });
-    }
-    parent.appendChild(box);
-  }
-  return parent;
-}
-
-const localStorage = window.localStorage;
-
-let warps = [];
-let wefts = [];
-let threadingList = [];
-let treadlingList = [];
-let tieupList = [];
-
-let shaftCount = 4;
+const shaftCount = 4;
+const convertColorIndex = ['a','b','c','d'];
+const root = document.documentElement;
 
 let PARAMS = {
   colorA: "#f0e130",
@@ -71,18 +8,17 @@ let PARAMS = {
   colorC: "#FF007F",
   wefts: 24,
   warps: 24,
-  tieups: 4
+  tieups: 4,
+  threading: [],
+  treadling: [],
+  tieup: [],
+  colorWefts: [],
+  colorWarps: []
 };
 const pane = new Tweakpane.Pane();
-let folder = pane.addFolder({
+const folder = pane.addFolder({
   title: 'Settings',
 });
-
-const dataByName = {
-  'threading': threadingList,
-  'treadling': treadlingList,
-  'tieup': tieupList,
-}
 
 const divThreading = document.getElementById("threading");
 const divTieup = document.getElementById("tieup");
@@ -92,16 +28,39 @@ const divWarps = document.getElementById("warps");
 const divWefts = document.getElementById("wefts");
 const divSwatches = document.getElementById("swatches");
 
+const createBoxes = (pattern, monochrome, className)=> {
+  const parent = document.createElement("div");
+  parent.className = className;
+  for(let i=0; i<pattern.length; i++) {
+    const box = document.createElement("div");
+    if(monochrome) {
+      box.className = (pattern[i]==1) ? 'box x':'box';
+      box.addEventListener("click", function() {
+        const sectionId = this.parentElement.parentElement.id;
+        const nodes = Array.prototype.slice.call( this.parentElement.children );
+        const index = nodes.indexOf(this);
+        const parentIndex = this.parentElement.index;
+        let value = PARAMS[sectionId][parentIndex][index];
+        value = value==0 ? 1:0;
+        PARAMS[sectionId][parentIndex][index] = value;
+        box.className = (value==1) ? 'box x':'box';
+        updateDrawdown();
+      });
+    } else {
+      box.className = 'box ' + convertColorIndex[pattern[i]];
+    }
+    parent.appendChild(box);
+  }
+  return parent;
+}
+
 const updateDrawdown = ()=> {
   for(let i=0; i<PARAMS.wefts; i++) {
     const myShafts = Array( shaftCount ).fill(0);
-
-    const treadlingPattern = treadlingList[i].pattern;
-    for(let j=0; j<treadlingPattern.length; j++) {
-      if(treadlingPattern[j] == 1) {
-        const tieupPattern = tieupList[j].pattern;
-        for(let k=0; k<tieupPattern.length; k++) {
-          if(tieupPattern[k]==1) {
+    for(let j=0; j<PARAMS.treadling[i].length; j++) {
+      if(PARAMS.treadling[i][j] == 1) {
+        for(let k=0; k<PARAMS.tieup[j].length; k++) {
+          if(PARAMS.tieup[j][k]==1) {
             myShafts[k] = 1;
           }
         }
@@ -111,23 +70,28 @@ const updateDrawdown = ()=> {
     const r = divDrawdown.childNodes[i];
 
     for(let j=0; j<PARAMS.warps; j++) {
-
-      r.childNodes[j].style.background = getColorByIndex( wefts[i] );
-
+      r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWefts[i] ];
       for(let k=0; k<shaftCount; k++) {
-        const threadingPattern = threadingList[k].pattern;
-        if(myShafts[k]==1 && threadingPattern[j]==1 ) {
-          r.childNodes[j].style.background = getColorByIndex( warps[j] );
+        if(myShafts[k]==1 && PARAMS.threading[k][j]==1 ) {
+          r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWarps[j] ];
         }
       }
     }
   }
+  updateLocalStorage();
 }
 
 const getLocalStorage = () => {
   const preset = window.localStorage.getItem('preset');
   if(preset!=null) {
     PARAMS = JSON.parse(preset);
+  } else {
+    PARAMS.threading = Array(shaftCount).fill( Array(PARAMS.warps).fill(0) );
+    PARAMS.treadling = Array(PARAMS.wefts).fill( Array(PARAMS.tieups).fill(0) );
+    PARAMS.tieup = Array(PARAMS.tieups).fill( Array(shaftCount).fill(0) );
+
+    PARAMS.colorWarps = Array(PARAMS.warps).fill(0);
+    PARAMS.colorWefts = Array(PARAMS.wefts).fill(1);
   }
   const inputColorA = folder.addInput(PARAMS, 'colorA');
   const inputColorB = folder.addInput(PARAMS, 'colorB');
@@ -135,67 +99,46 @@ const getLocalStorage = () => {
   const inputWarps = folder.addInput(PARAMS, 'warps', {min: 20, max: 120, step: 2});
   const inputWefts = folder.addInput(PARAMS, 'wefts', {min: 20, max: 120, step: 2});
   const inputTieups = folder.addInput(PARAMS, 'tieups', {min: 4, max: 6, step: 1});
+
+  root.style.setProperty('--color-a', PARAMS.colorA);
+  root.style.setProperty('--color-b', PARAMS.colorB);
+  root.style.setProperty('--color-c', PARAMS.colorC);
 }
 
 const updateLocalStorage = ()=> {
-
-  const preset = pane.exportPreset();
-  window.localStorage.setItem('preset', JSON.stringify(preset));
-}
-
-const getColorByIndex = (index)=> {
-  const colors = [PARAMS.colorA, PARAMS.colorB, PARAMS.colorC];
-  return colors[index];
+  window.localStorage.setItem('preset', JSON.stringify(PARAMS));
 }
 
 const init = ()=> {
   getLocalStorage();
 
-  const rowWarps = createBoxes(PARAMS.warps, false);
-  rowWarps.className = 'row reverse';
-  divWarps.appendChild(rowWarps);
-  const rowWefts = createBoxes(PARAMS.wefts, false);
-  rowWefts.className = 'col';
-  divWefts.appendChild(rowWefts);
-  for(let i=0; i<PARAMS.warps; i++) {
-    warps.push( 0 );
-    rowWarps.childNodes[i].style.background = PARAMS.colorA;
-  }
-  for(let i=0; i<PARAMS.wefts; i++) {
-    wefts.push( 1 );
-    rowWefts.childNodes[i].style.background = PARAMS.colorB;
-  }
+  divWarps.appendChild( createBoxes(PARAMS.colorWarps, false, 'row reverse') );
+  divWefts.appendChild( createBoxes(PARAMS.colorWefts, false, 'col') );
+
   for(let i=0; i<shaftCount; i++) {
-    const myThreading = new Threading(PARAMS.warps);
-    threadingList.push( myThreading );
-    divThreading.appendChild( myThreading.div );
-    myThreading.div.index = i;
+    const div = createBoxes(PARAMS.threading[i], true, 'row reverse');
+    divThreading.appendChild( div );
+    div.index = i;
   }
   for(let i=0; i<PARAMS.wefts; i++) {
-    const myTreadling = new Treadling(PARAMS.tieups);
-    treadlingList.push( myTreadling );
-    divTreadling.appendChild(myTreadling.div);
-    myTreadling.div.index = i;
+    const div = createBoxes(PARAMS.treadling[i], true, 'row');
+    divTreadling.appendChild( div );
+    div.index = i;
   }
   for(let i=0; i<PARAMS.tieups; i++) {
-    const myTieup = new Tieup(shaftCount);
-    tieupList.push(myTieup);
-    divTieup.appendChild(myTieup.div);
-    myTieup.div.index = i;
+    const div = createBoxes(PARAMS.tieup[i], true, 'col reverse');
+    divTieup.appendChild( div );
+    div.index = i;
   }
 
   for(let i=0; i<PARAMS.wefts; i++) {
-    const row = createBoxes(PARAMS.warps, false);
-    row.className = 'row reverse';
-    divDrawdown.appendChild(row);
-    for(let j=0; j<PARAMS.warps; j++) {
-      row.childNodes[j].style.background = getColorByIndex( warps[j] );
-    }
+    const div = createBoxes(PARAMS.threading[0], false, 'row reverse');
+    divDrawdown.appendChild(div);
   }
-
-  document.addEventListener("mouseup", function() {
-    updateLocalStorage();
-  });
+  updateDrawdown();
+  // document.addEventListener("mouseup", function() {
+  //   updateLocalStorage();
+  // });
 
 }
 
