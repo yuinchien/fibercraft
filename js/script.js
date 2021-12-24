@@ -44,7 +44,7 @@ const createBoxes = (pattern, monochrome, className)=> {
         value = value==0 ? 1:0;
         PARAMS[sectionId][parentIndex][index] = value;
         box.className = (value==1) ? 'box x':'box';
-        updateDrawdown();
+        createDrawdown();
       });
     } else {
       box.className = 'box ' + convertColorIndex[pattern[i]];
@@ -81,14 +81,22 @@ const updateDrawdown = ()=> {
   updateLocalStorage();
 }
 
-const getLocalStorage = () => {
+let interval = null;
+
+const getLocalStorage = ()=> {
   const preset = window.localStorage.getItem('preset');
   if(preset!=null) {
     PARAMS = JSON.parse(preset);
   } else {
-    PARAMS.threading = Array(shaftCount).fill( Array(PARAMS.warps).fill(0) );
-    PARAMS.treadling = Array(PARAMS.wefts).fill( Array(PARAMS.tieups).fill(0) );
-    PARAMS.tieup = Array(PARAMS.tieups).fill( Array(shaftCount).fill(0) );
+    for(let i=0; i<shaftCount; i++) {
+      PARAMS.threading.push( Array(PARAMS.warps).fill(0) );
+    }
+    for(let i=0; i<PARAMS.wefts; i++) {
+      PARAMS.treadling.push( Array(PARAMS.tieups).fill(0) );
+    }
+    for(let i=0; i<PARAMS.tieups; i++) {
+      PARAMS.tieup.push( Array(shaftCount).fill(0) );
+    }
 
     PARAMS.colorWarps = Array(PARAMS.warps).fill(0);
     PARAMS.colorWefts = Array(PARAMS.wefts).fill(1);
@@ -96,9 +104,84 @@ const getLocalStorage = () => {
   const inputColorA = folder.addInput(PARAMS, 'colorA');
   const inputColorB = folder.addInput(PARAMS, 'colorB');
   const inputColorC = folder.addInput(PARAMS, 'colorC');
-  const inputWarps = folder.addInput(PARAMS, 'warps', {min: 20, max: 120, step: 2});
-  const inputWefts = folder.addInput(PARAMS, 'wefts', {min: 20, max: 120, step: 2});
+  const inputWarps = folder.addInput(PARAMS, 'warps', {min: 10, max: 120, step: 2});
+  const inputWefts = folder.addInput(PARAMS, 'wefts', {min: 10, max: 120, step: 2});
   const inputTieups = folder.addInput(PARAMS, 'tieups', {min: 4, max: 6, step: 1});
+
+  inputWarps.on('change', (ev) => {
+    clearInterval(interval);
+    interval = setTimeout(function(){
+      const delta = ev.value - PARAMS.threading[0].length;
+      console.log(delta);
+      if(delta==0) { return }
+      if(delta>0) {
+        for(let i=0; i<PARAMS.threading.length; i++) {
+          PARAMS.threading[i].push( ...Array(delta).fill(0) );
+        }
+        PARAMS.colorWarps.push( ...Array(delta).fill(0) );
+      } else {
+        for(let i=0; i<PARAMS.threading.length; i++) {
+          PARAMS.threading[i].splice( PARAMS.threading[i].length+delta, -delta );
+        }
+        PARAMS.colorWarps.splice( PARAMS.colorWarps.length+delta, -delta );
+      }
+      createThreading();
+      createColorWarps();
+      createDrawdown();
+    }, 300);
+  });
+
+  inputWefts.on('change', (ev) => {
+    clearInterval(interval);
+    interval = setTimeout(function(){
+      const delta = ev.value - PARAMS.treadling.length;
+      console.log(delta);
+      if(delta==0) { return }
+      if(delta>0) {
+        for(let i=0; i<delta; i++) {
+          PARAMS.treadling.push( Array(PARAMS.tieups).fill(0) );
+        }
+        PARAMS.colorWefts.push( ...Array(delta).fill(1) );
+      } else {
+        for(let i=0; i<Math.abs(delta); i++) {
+          PARAMS.treadling.pop();
+        }
+        PARAMS.colorWefts.splice( PARAMS.colorWefts.length+delta, -delta );
+      }
+      createTreadling();
+      createColorWefts();
+      createDrawdown();
+    }, 300);
+  });
+
+  inputTieups.on('change', (ev) => {
+    console.log('NOT YET');
+    clearInterval(interval);
+    interval = setTimeout(function(){
+      const delta = ev.value - PARAMS.tieup.length;
+      console.log(delta);
+      console.log('DOT IT');
+      if(delta==0) { return }
+      if(delta>0) {
+        for(let i=0; i<delta; i++) {
+          PARAMS.tieup.push( Array(shaftCount).fill(0) );
+        }
+        for(let i=0; i<PARAMS.treadling.length; i++) {
+          PARAMS.treadling[i].push( ...Array(delta).fill(0) );
+        }
+      } else {
+        for(let i=0; i<Math.abs(delta); i++) {
+          PARAMS.tieup.pop();
+        }
+        for(let i=0; i<PARAMS.treadling.length; i++) {
+          PARAMS.treadling[i].splice( PARAMS.treadling[i].length+delta, -delta );
+        }
+      }
+      createTieup();
+      createTreadling();
+      createDrawdown();
+    }, 300);
+  });
 
   root.style.setProperty('--color-a', PARAMS.colorA);
   root.style.setProperty('--color-b', PARAMS.colorB);
@@ -109,37 +192,63 @@ const updateLocalStorage = ()=> {
   window.localStorage.setItem('preset', JSON.stringify(PARAMS));
 }
 
-const init = ()=> {
-  getLocalStorage();
+const removeAllChildNodes =(parent)=> {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
 
-  divWarps.appendChild( createBoxes(PARAMS.colorWarps, false, 'row reverse') );
-  divWefts.appendChild( createBoxes(PARAMS.colorWefts, false, 'col') );
-
+const createThreading = ()=> {
+  removeAllChildNodes(divThreading);
   for(let i=0; i<shaftCount; i++) {
     const div = createBoxes(PARAMS.threading[i], true, 'row reverse');
     divThreading.appendChild( div );
     div.index = i;
   }
+}
+
+const createTreadling = ()=> {
+  removeAllChildNodes(divTreadling);
   for(let i=0; i<PARAMS.wefts; i++) {
     const div = createBoxes(PARAMS.treadling[i], true, 'row');
     divTreadling.appendChild( div );
     div.index = i;
   }
+}
+
+const createTieup = ()=> {
+  removeAllChildNodes(divTieup);
   for(let i=0; i<PARAMS.tieups; i++) {
     const div = createBoxes(PARAMS.tieup[i], true, 'col reverse');
     divTieup.appendChild( div );
     div.index = i;
   }
-
+}
+const createDrawdown = ()=> {
+  removeAllChildNodes(divDrawdown);
   for(let i=0; i<PARAMS.wefts; i++) {
     const div = createBoxes(PARAMS.threading[0], false, 'row reverse');
     divDrawdown.appendChild(div);
   }
   updateDrawdown();
-  // document.addEventListener("mouseup", function() {
-  //   updateLocalStorage();
-  // });
+}
+const createColorWarps = ()=> {
+  removeAllChildNodes(divWarps);
+  divWarps.appendChild( createBoxes(PARAMS.colorWarps, false, 'row reverse') );
+}
+const createColorWefts = ()=> {
+  removeAllChildNodes(divWefts);
+  divWefts.appendChild( createBoxes(PARAMS.colorWefts, false, 'col') );
+}
+const init = ()=> {
+  getLocalStorage();
 
+  createColorWarps();
+  createColorWefts();
+  createThreading();
+  createTreadling();
+  createTieup();
+  createDrawdown();
 }
 
 init();
