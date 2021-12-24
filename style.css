@@ -1,0 +1,193 @@
+/******************************************************************************
+START Glitch hello-app default styles
+
+The styles in this section do some minimal CSS resets, set default fonts and
+colors, and handle the layout for our footer and "Remix on Glitch" button. If
+you're new to CSS they may seem a little complicated, but you can scroll down
+to this section's matching END comment to see page-specific styles.
+******************************************************************************/
+
+
+/*
+  The style rules specify elements by type and by attributes such as class and ID
+  Each section indicates an element or elements, then lists the style properties to apply
+  See if you can cross-reference the rules in this file with the elements in index.html
+*/
+
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
+
+/* Our default values set as CSS variables */
+:root {
+  --color-bg: #fff;
+  --color-text-main: #000;
+  --color-primary: #FFFF00;
+  --wrapper-height: 87vh;
+  --image-margin: 3rem;
+  --font-mono-family: "Space Mono";
+  --font-size: 12px;
+  --line-height: 24px;
+  --box-size: 20px;
+  --border: 1px solid rgba(0,0,0,0.1);
+  --shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: var(--font-mono-family);
+  background-color: var(--color-bg);
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  margin: 0;
+  padding: 0;
+}
+
+.font-mono {
+  font-family: var(--font-mono-family);
+}
+
+input[type="color"] {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background: none;
+  outline: none;
+  color: none;
+  border: none;
+  overflow: hidden;
+}
+
+
+/* Page structure */
+#canvas {
+  margin: var(--box-size);
+}
+
+.row {
+  display: flex;
+}
+.row.reverse {
+  flex-direction: row-reverse;
+}
+
+.container {
+  position: relative;
+}
+.container:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: -1px;
+  top: 0;
+  bottom: -1px;
+  border: 1px solid #eee;
+/*   var(--border); */
+  pointer-events: none;
+}
+.container.borderless:before {
+  border-color: var(--color-bg);
+}
+
+.container .row {
+  margin-bottom: -1px;
+}
+
+.container .col {
+  margin-right: -1px;
+}
+
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+.col.reverse {
+  flex-direction: column-reverse;
+}
+
+.box {
+  width: var(--box-size);
+  height: var(--box-size);
+  border: var(--border);
+  background: var(--color-bg);
+  cursor: pointer;
+}
+.row > .box {
+  margin-right: -1px;
+}
+.col > .box {
+  margin-bottom: -1px;
+}
+
+.box.x {
+  background: rgba(0,0,0,.8);
+}
+
+.sticky {
+  position: -webkit-sticky !important; /* Safari */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tp-dfwv {
+  position: fixed !important;
+  bottom: 8px !important;
+  top: unset !important;
+  z-index: 100;
+}
+
+#threading {
+  margin-right: calc( var(--box-size)/2 );
+  display: flex;
+  flex-direction: column-reverse;
+  box-shadow: var(--shadow);
+}
+#treadling {
+  margin-right: calc( var(--box-size)/2 );
+}
+#tieup {
+  display: flex;
+  align-items: start;
+  box-shadow: var(--shadow);
+}
+#drawdown {
+  border-color: var(--color-bg);
+  margin-right: calc( var(--box-size)/2 );
+}
+#drawdown .box {
+  border-color: var(--color-bg);
+}
+#canvas > .row {
+  margin-bottom: calc( var(--box-size)/2 );
+}
+#warps {
+  margin-bottom: calc( var(--box-size)/2 );
+  line-height: 0;
+}
+#warps .row {
+  justify-content: flex-end;
+  line-height: 0;
+}
+
+#warps .box,
+#wefts .box {
+  border-color: var(--color-bg);
+}
+#warps .box {
+  background: #666;
+}
+#wefts .box {
+  background: #fff;
+}
+
+#swatches {
+  display: flex;
+}
+.swatch {
+  border-radius: 40px;
+  width: 40px;
+  height: 40px;
+  margin-right: 8px;
+  cursor: pointer;
+}s
