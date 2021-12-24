@@ -33,6 +33,7 @@ to this section's matching END comment to see page-specific styles.
   --color-a: #eee;
   --color-b: #999;
   --color-c: #222;
+  --color-d: #444;
 }
 
 body {
@@ -124,6 +125,9 @@ input[type="color"] {
 .box.c {
   background: var(--color-c);
 }
+.box.d {
+  background: var(--color-d);
+}
 .row > .box {
   margin-right: -1px;
 }
@@ -173,17 +177,17 @@ input[type="color"] {
 #canvas > .row {
   margin-bottom: calc( var(--box-size)/2 );
 }
-#warps {
+#colorWarps {
   margin-bottom: calc( var(--box-size)/2 );
   line-height: 0;
 }
-#warps .row {
+#colorWarps .row {
   justify-content: flex-end;
   line-height: 0;
 }
 
-#warps .box,
-#wefts .box {
+#colorWarps .box,
+#colorWefts .box {
   border-color: var(--color-bg);
 }
 
