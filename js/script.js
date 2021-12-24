@@ -190,6 +190,7 @@ const getLocalStorage = ()=> {
   root.style.setProperty('--color-b', PARAMS.colorB);
   root.style.setProperty('--color-c', PARAMS.colorC);
   root.style.setProperty('--color-d', PARAMS.colorD);
+  root.style.setProperty('--box-size', PARAMS.size+'px');
 }
 
 const updateLocalStorage = ()=> {
