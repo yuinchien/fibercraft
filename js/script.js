@@ -54,33 +54,6 @@ const createBoxes = (pattern, monochrome, className)=> {
   return parent;
 }
 
-const updateDrawdown = ()=> {
-  for(let i=0; i<PARAMS.wefts; i++) {
-    const myShafts = Array( shaftCount ).fill(0);
-    for(let j=0; j<PARAMS.treadling[i].length; j++) {
-      if(PARAMS.treadling[i][j] == 1) {
-        for(let k=0; k<PARAMS.tieup[j].length; k++) {
-          if(PARAMS.tieup[j][k]==1) {
-            myShafts[k] = 1;
-          }
-        }
-      }
-    }
-
-    const r = divDrawdown.childNodes[i];
-
-    for(let j=0; j<PARAMS.warps; j++) {
-      r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWefts[i] ];
-      for(let k=0; k<shaftCount; k++) {
-        if(myShafts[k]==1 && PARAMS.threading[k][j]==1 ) {
-          r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWarps[j] ];
-        }
-      }
-    }
-  }
-  updateLocalStorage();
-}
-
 let interval = null;
 
 const getLocalStorage = ()=> {
@@ -107,6 +80,19 @@ const getLocalStorage = ()=> {
   const inputWarps = folder.addInput(PARAMS, 'warps', {min: 10, max: 120, step: 2});
   const inputWefts = folder.addInput(PARAMS, 'wefts', {min: 10, max: 120, step: 2});
   const inputTieups = folder.addInput(PARAMS, 'tieups', {min: 4, max: 6, step: 1});
+
+  inputColorA.on('change', (ev) => {
+    root.style.setProperty('--color-a', PARAMS.colorA);
+    updateLocalStorage();
+  });
+  inputColorB.on('change', (ev) => {
+    root.style.setProperty('--color-b', PARAMS.colorB);
+    updateLocalStorage();
+  });
+  inputColorC.on('change', (ev) => {
+    root.style.setProperty('--color-c', PARAMS.colorC);
+    updateLocalStorage();
+  });
 
   inputWarps.on('change', (ev) => {
     clearInterval(interval);
@@ -155,12 +141,9 @@ const getLocalStorage = ()=> {
   });
 
   inputTieups.on('change', (ev) => {
-    console.log('NOT YET');
     clearInterval(interval);
     interval = setTimeout(function(){
       const delta = ev.value - PARAMS.tieup.length;
-      console.log(delta);
-      console.log('DOT IT');
       if(delta==0) { return }
       if(delta>0) {
         for(let i=0; i<delta; i++) {
@@ -230,7 +213,28 @@ const createDrawdown = ()=> {
     const div = createBoxes(PARAMS.threading[0], false, 'row reverse');
     divDrawdown.appendChild(div);
   }
-  updateDrawdown();
+  for(let i=0; i<PARAMS.wefts; i++) {
+    const myShafts = Array( shaftCount ).fill(0);
+    for(let j=0; j<PARAMS.treadling[i].length; j++) {
+      if(PARAMS.treadling[i][j] == 1) {
+        for(let k=0; k<PARAMS.tieup[j].length; k++) {
+          if(PARAMS.tieup[j][k]==1) {
+            myShafts[k] = 1;
+          }
+        }
+      }
+    }
+    const r = divDrawdown.childNodes[i];
+    for(let j=0; j<PARAMS.warps; j++) {
+      r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWefts[i] ];
+      for(let k=0; k<shaftCount; k++) {
+        if(myShafts[k]==1 && PARAMS.threading[k][j]==1 ) {
+          r.childNodes[j].className = 'box ' + convertColorIndex[ PARAMS.colorWarps[j] ];
+        }
+      }
+    }
+  }
+  updateLocalStorage();
 }
 const createColorWarps = ()=> {
   removeAllChildNodes(divWarps);
