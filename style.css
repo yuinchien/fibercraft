@@ -28,13 +28,13 @@ to this section's matching END comment to see page-specific styles.
   --font-size: 12px;
   --line-height: 24px;
   --box-size: 20px;
-  --border: 1px solid #eeee;
-  /* rgba(0,0,0,0.1); */
-  --shadow: 0 1px 8px rgba(0,0,0,0.15);
+  --border: 1px solid #eee;
+  --shadow: 0 1px 8px rgba(0,0,0,0.2);
   --color-a: #eee;
   --color-b: #999;
   --color-c: #222;
   --color-d: #444;
+  --color-dark: #444;
 }
 
 body {
@@ -45,7 +45,9 @@ body {
   margin: 0;
   padding: 0;
 }
-
+* {
+  box-sizing: border-box;
+}
 #canvas {
   margin: var(--box-size);
 }
@@ -72,8 +74,6 @@ body {
 .box {
   width: var(--box-size);
   height: var(--box-size);
-  border: var(--border);
-  background: var(--color-bg);
   cursor: pointer;
 }
 .box.a {
@@ -89,9 +89,23 @@ body {
   background: var(--color-d);
 }
 
-.box.x {
-  background: rgba(0,0,0,.8);
-  border-color: #222;
+.dots .box {
+  border: var(--border);
+  background: var(--color-bg);
+}
+.dots .box.x {
+  position: relative;
+}
+.dots .box.x:after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  top: 8%;
+  width: 84%;
+  height: 84%;
+  background: var(--color-dark);
+  border-radius: var(--box-size);
+  pointer-events: none;
 }
 
 .sticky {
@@ -114,6 +128,7 @@ body {
   flex-direction: column-reverse;
   box-shadow: var(--shadow);
 }
+
 #treadling {
   margin-right: calc( var(--box-size)/2 );
 }
@@ -127,7 +142,8 @@ body {
   margin-right: calc( var(--box-size)/2 );
 }
 #drawdown .box {
-  border-color: var(--color-bg);
+  border-color: transparent;
+  /* var(--color-bg); */
 }
 #canvas > .row {
   margin-bottom: calc( var(--box-size)/2 );
@@ -150,12 +166,13 @@ body {
   margin-left: calc( var(--box-size)/2 );
 }
 #checklist .box {
-  overflow: hidden;
-  background: #eee;
-  border-color: var(--color-bg);
+  /* overflow: hidden; */
+  /* background: rgba(0,0,0,.15); */
+  /* border-color: #eee; */
+  /* rgba(0,0,0,.1); */
 }
-#checklist .box.x {
-  background: #666;
+/* #checklist .box.x {
+  background: rgba(0,0,0,.8);
   border-color: var(--color-bg);
   border-radius: 20px;
-}
+} */
