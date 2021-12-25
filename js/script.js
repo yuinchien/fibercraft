@@ -219,7 +219,7 @@ const getLocalStorage = ()=> {
 
   inputReset.on('click', () => {
     window.localStorage.clear();
-
+    location.reload();
   });
 
   root.style.setProperty('--color-a', PARAMS.colorA);
