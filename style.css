@@ -146,13 +146,16 @@ body {
   border-color: var(--color-bg);
 }
 
-#swatches {
-  display: flex;
+#checklist {
+  margin-left: calc( var(--box-size)/2 );
 }
-.swatch {
-  border-radius: 40px;
-  width: 40px;
-  height: 40px;
-  margin-right: 8px;
-  cursor: pointer;
-}s
+#checklist .box {
+  overflow: hidden;
+  background: #eee;
+  border-color: var(--color-bg);
+}
+#checklist .box.x {
+  background: #666;
+  border-color: var(--color-bg);
+  border-radius: 20px;
+}

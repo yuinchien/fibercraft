@@ -15,6 +15,7 @@ let PARAMS = {
   tieup: [],
   colorWefts: [],
   colorWarps: [],
+  checklist: [],
   size: 20
 };
 const pane = new Tweakpane.Pane();
@@ -28,7 +29,7 @@ const divDrawdown= document.getElementById("drawdown");
 const divTreadling = document.getElementById("treadling");
 const divColorWarps = document.getElementById("colorWarps");
 const divColorWefts = document.getElementById("colorWefts");
-const divSwatches = document.getElementById("swatches");
+const divChecklist = document.getElementById("checklist");
 let interval = null;
 
 const createBoxes = (pattern, monochrome, className)=> {
@@ -39,13 +40,20 @@ const createBoxes = (pattern, monochrome, className)=> {
     if(monochrome) {
       box.className = (pattern[i]==1) ? 'box x':'box';
       box.addEventListener("click", function() {
-        const sectionId = this.parentElement.parentElement.id;
+        const sectionId = this.parentElement.parentElement.id; console.log(sectionId);
         const nodes = Array.prototype.slice.call( this.parentElement.children );
-        const index = nodes.indexOf(this);
-        const parentIndex = this.parentElement.index;
-        let value = PARAMS[sectionId][parentIndex][index];
-        value = value==0 ? 1:0;
-        PARAMS[sectionId][parentIndex][index] = value;
+        const index = nodes.indexOf(this); console.log(index);
+        let value = 0;
+        if(sectionId=='checklist') {
+          value = PARAMS[sectionId][index];
+          value = value==0 ? 1:0;
+          PARAMS[sectionId][index] = value;
+        } else {
+          const parentIndex = this.parentElement.index;
+          value = PARAMS[sectionId][parentIndex][index];
+          value = value==0 ? 1:0;
+          PARAMS[sectionId][parentIndex][index] = value;
+        }
         box.className = (value==1) ? 'box x':'box';
         createDrawdown();
       });
@@ -83,6 +91,7 @@ const getLocalStorage = ()=> {
     }
     PARAMS.colorWarps = Array(PARAMS.warps).fill(0);
     PARAMS.colorWefts = Array(PARAMS.wefts).fill(1);
+    PARAMS.checklist = Array(PARAMS.wefts).fill(0);
   }
   const inputColorA = folder.addInput(PARAMS, 'colorA');
   const inputColorB = folder.addInput(PARAMS, 'colorB');
@@ -270,7 +279,9 @@ const createColorWarps = ()=> {
 }
 const createColorWefts = ()=> {
   removeAllChildNodes(divColorWefts);
+  removeAllChildNodes(divChecklist);
   divColorWefts.appendChild( createBoxes(PARAMS.colorWefts, false, 'col') );
+  divChecklist.appendChild( createBoxes(PARAMS.checklist, true, 'col') );
 }
 const init = ()=> {
   getLocalStorage();
