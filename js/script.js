@@ -2,7 +2,15 @@ const shaftCount = 4;
 const convertColorIndex = ['a','b','c','d'];
 const root = document.documentElement;
 
+let patternList = [];
+
+patternList[0] = '{"pattern":0,"colorA":"#222222","colorB":"#3cffbf","colorC":"#7f7f7f","colorD":"#444","wefts":32,"warps":56,"tieups":4,"threading":[[1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,1,0,1,0,1,0,0,0,0,1,0,0,1,0,1,0],[0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0],[0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,1],[0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0]],"treadling":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,1],[0,0,1,0]],"tieup":[[1,1,0,0],[0,1,1,0],[0,0,1,1],[1,0,0,1]],"colorWefts":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"colorWarps":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"checklist":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"size":20}';
+
+patternList[1] =
+'{"pattern":1,"colorA":"#0082ff","colorB":"#ffccb8","colorC":"#7f7f7f","colorD":"#444","wefts":26,"warps":42,"tieups":6,"threading":[[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],[0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1],[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],[0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0]],"treadling":[[1,0,0,0,0,0],[0,1,0,0,0,0],[0,0,1,0,0,0],[0,0,0,1,0,0],[1,0,0,0,0,0],[0,1,0,0,0,0],[0,0,1,0,0,0],[0,0,0,1,0,0],[1,1,0,0,0,0],[0,1,1,0,0,0],[0,0,1,1,0,0],[1,0,0,1,0,0],[1,1,0,0,0,0],[0,1,1,0,0,0],[1,0,1,1,0,0],[1,1,0,1,0,0],[1,1,1,0,0,0],[0,1,1,1,0,0],[0,0,1,1,0,0],[0,1,0,1,0,0],[1,1,0,0,0,0],[1,1,0,0,0,0],[1,1,0,0,0,0],[1,0,0,1,0,0],[0,0,1,0,0,0],[0,1,0,0,0,0]],"tieup":[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[0,0,0,0],[0,0,0,0]],"colorWefts":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"colorWarps":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"checklist":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"size":26}';
+
 let PARAMS = {
+  pattern: 0,
   colorA: "#f0e130",
   colorB: "#303ff0",
   colorC: "#FF007F",
@@ -80,19 +88,19 @@ const getLocalStorage = ()=> {
   if(preset!=null) {
     PARAMS = JSON.parse(preset);
   } else {
-    for(let i=0; i<shaftCount; i++) {
-      PARAMS.threading.push( Array(PARAMS.warps).fill(0) );
-    }
-    for(let i=0; i<PARAMS.wefts; i++) {
-      PARAMS.treadling.push( Array(PARAMS.tieups).fill(0) );
-    }
-    for(let i=0; i<PARAMS.tieups; i++) {
-      PARAMS.tieup.push( Array(shaftCount).fill(0) );
-    }
-    PARAMS.colorWarps = Array(PARAMS.warps).fill(0);
-    PARAMS.colorWefts = Array(PARAMS.wefts).fill(1);
-    PARAMS.checklist = Array(PARAMS.wefts).fill(0);
+    PARAMS = JSON.parse( patternList[0] );
   }
+
+  const inputPattern = folder.addBlade({
+    view: 'list',
+    label: 'pattern',
+    options: [
+      {text: '00', value: 0},
+      {text: '01', value: 1},
+    ],
+    value: PARAMS.pattern,
+  });
+
   const inputColorA = folder.addInput(PARAMS, 'colorA');
   const inputColorB = folder.addInput(PARAMS, 'colorB');
   const inputColorC = folder.addInput(PARAMS, 'colorC');
@@ -101,6 +109,16 @@ const getLocalStorage = ()=> {
   const inputWefts = folder.addInput(PARAMS, 'wefts', {min: 10, max: 120, step: 2});
   const inputTieups = folder.addInput(PARAMS, 'tieups', {min: 4, max: 6, step: 1});
   const inputSize = folder.addInput(PARAMS, 'size',{min: 12, max: 32, step: 2});
+  const inputReset = folder.addButton({title: 'Reset'});
+
+  inputPattern.on('change', (ev) => {
+    const data = JSON.parse( patternList[ ev.value ] );
+    for(let obj in data) {
+      PARAMS[obj] = data[obj];
+    }
+    pane.refresh();
+    create();
+  });
 
   inputColorA.on('change', (ev) => {
     root.style.setProperty('--color-a', PARAMS.colorA);
@@ -195,6 +213,11 @@ const getLocalStorage = ()=> {
     }, 300);
   });
 
+  inputReset.on('click', () => {
+    window.localStorage.clear();
+
+  });
+
   root.style.setProperty('--color-a', PARAMS.colorA);
   root.style.setProperty('--color-b', PARAMS.colorB);
   root.style.setProperty('--color-c', PARAMS.colorC);
@@ -283,8 +306,8 @@ const createColorWefts = ()=> {
   divColorWefts.appendChild( createBoxes(PARAMS.colorWefts, false, 'col') );
   divChecklist.appendChild( createBoxes(PARAMS.checklist, true, 'col') );
 }
-const init = ()=> {
-  getLocalStorage();
+
+const create = ()=> {
   createColorWarps();
   createColorWefts();
   createThreading();
@@ -293,4 +316,5 @@ const init = ()=> {
   createDrawdown();
 }
 
-init();
+getLocalStorage();
+create();
